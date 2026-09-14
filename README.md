@@ -32,16 +32,9 @@ Sorties dans `output/` :
 
 ## Webapp interactive
 
-**En ligne : https://gkpo.github.io/itinerary-optim/** — le workflow `.github/workflows/pages.yml` pousse
-`webapp/` sur la branche `gh-pages` à chaque modification. Activation à faire une seule fois par le
-propriétaire du dépôt : *Settings → Pages → Build and deployment → Source : « Deploy from a branch »,
-branche `gh-pages`, dossier `/ (root)`* (le jeton des Actions n'a pas le droit de créer le site Pages).
-
-`webapp/index.html` est une application autonome (mobile et bureau) : curseur de **détour maximal autorisé**
-qui change le tracé en direct, choix de la **fenêtre de pente** (50 / 100 / 200 m, tracés recalculés pour
-chacune), **seuil « raide »** et **puissance du cycliste** réglables, profil altimétrique interactif lié à la
-carte, courbe « pente max atteignable selon le détour », feuille de route, superposition du plus court chemin
-et de toutes les variantes.
+**En ligne : https://gkpo.github.io/itinerary-optim/** — le workflow `.github/workflows/pages.yml` déploie
+`webapp/` à chaque modification, quelle que soit la source configurée dans *Settings → Pages* (déploiement
+direct par GitHub Actions, et copie sur la branche `gh-pages` pour le mode « Deploy from a branch »).
 
 ```bash
 PYTHONPATH=src python -m itinerary_optim.webapp_build config.yaml   # précalcul (≈ 15 min) + fond de carte
