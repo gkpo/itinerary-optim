@@ -1,7 +1,8 @@
 name: Déployer la webapp sur GitHub Pages
 
-# Publie le contenu de webapp/ sur la branche gh-pages ; GitHub Pages sert cette branche
-# (Settings → Pages → Source : "Deploy from a branch", gh-pages, /).
+# Deux mécanismes, pour fonctionner quelle que soit la source choisie dans Settings → Pages :
+#  - "Deploy from a branch" (gh-pages, /) : le job publish-branch pousse webapp/ sur gh-pages ;
+#  - "GitHub Actions" : le job deploy-actions déploie webapp/ directement.
 on:
   push:
     branches: [main, claude/paris-bike-routes-gentle-slopes-2m4xmk]
@@ -10,13 +11,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  publish:
+  publish-branch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,3 +36,18 @@ jobs:
           publish_branch: gh-pages
           force_orphan: true
           commit_message: "Webapp ${{ github.sha }}"
+
+  deploy-actions:
+    runs-on: ubuntu-latest
+    continue-on-error: true   # échoue sans bloquer si la source Pages est la branche gh-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: webapp
+      - id: deployment
+        uses: actions/deploy-pages@v4
