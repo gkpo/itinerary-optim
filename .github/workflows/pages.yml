@@ -1,5 +1,7 @@
 name: Déployer la webapp sur GitHub Pages
 
+# Publie le contenu de webapp/ sur la branche gh-pages ; GitHub Pages sert cette branche
+# (Settings → Pages → Source : "Deploy from a branch", gh-pages, /).
 on:
   push:
     branches: [main, claude/paris-bike-routes-gentle-slopes-2m4xmk]
@@ -7,32 +9,27 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Configurer Pages (activation automatique si nécessaire)
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Vérifier que la page assemblée est à jour
+      - name: Vérifier que la page assemblée est complète
         run: |
-          test -f webapp/index.html -a -f webapp/data.js -a -f webapp/basemap.webp
+          test -f webapp/index.html -a -f webapp/data.js -a -f webapp/basemap.webp -a -f webapp/leaflet.js
           grep -q "ROUTE_DATA" webapp/data.js
-      - uses: actions/upload-pages-artifact@v3
+          touch webapp/.nojekyll
+      - name: Pousser webapp/ sur gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: webapp
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./webapp
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Webapp ${{ github.sha }}"
