@@ -32,6 +32,8 @@ Sorties dans `output/` :
 
 ## Webapp interactive
 
+**En ligne : https://gkpo.github.io/itinerary-optim/** (déployée par GitHub Actions depuis `webapp/`).
+
 `webapp/index.html` est une application autonome (mobile et bureau) : curseur de **détour maximal autorisé**
 qui change le tracé en direct, choix de la **fenêtre de pente** (50 / 100 / 200 m, tracés recalculés pour
 chacune), **seuil « raide »** et **puissance du cycliste** réglables, profil altimétrique interactif lié à la

@@ -1,0 +1,38 @@
+name: Déployer la webapp sur GitHub Pages
+
+on:
+  push:
+    branches: [main, claude/paris-bike-routes-gentle-slopes-2m4xmk]
+    paths: ["webapp/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurer Pages (activation automatique si nécessaire)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Vérifier que la page assemblée est à jour
+        run: |
+          test -f webapp/index.html -a -f webapp/data.js -a -f webapp/basemap.webp
+          grep -q "ROUTE_DATA" webapp/data.js
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: webapp
+      - id: deployment
+        uses: actions/deploy-pages@v4
