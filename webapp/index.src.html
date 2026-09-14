@@ -146,14 +146,18 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
           <input type="range" id="detour" min="0" max="120" step="1" value="10" aria-describedby="detourHint">
           <div class="hint" id="detourHint"></div>
         </div>
-        <canvas class="chart" id="frontier" aria-label="Pente maximale en fonction du détour autorisé"></canvas>
-        <p class="chart-note">Pente max atteignable selon le détour autorisé. Touchez la courbe pour déplacer le curseur.</p>
       </section>
 
       <section>
         <h2>Profil</h2>
         <canvas class="chart" id="profile" aria-label="Profil altimétrique"></canvas>
         <div class="legend"><span><i style="background:var(--climb)"></i>montée 2 % au seuil</span><span><i style="background:var(--steep)"></i>au-delà du seuil</span><span><i style="background:var(--descent)"></i>descente</span></div>
+      </section>
+
+      <section>
+        <h2>Pente max selon le détour</h2>
+        <canvas class="chart" id="frontier" aria-label="Pente maximale en fonction du détour autorisé"></canvas>
+        <p class="chart-note">Pente max atteignable selon le détour autorisé. Touchez la courbe pour déplacer le curseur.</p>
       </section>
 
       <section>
