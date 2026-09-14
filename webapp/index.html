@@ -723,12 +723,12 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 #handle { flex: 0 0 auto; padding: 8px 0 4px; cursor: grab; text-align: center; }
 #handle span { display: inline-block; width: 44px; height: 5px; border-radius: 3px; background: var(--line); }
 #scroll { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 24px; touch-action: pan-y; }
-header.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 2px 0 8px; }
+header.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 2px 0 4px; }
 h1 { font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1; margin: 0; letter-spacing: .01em; text-wrap: balance; }
 h1 small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
 .pill { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 12px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
 .stat { background: var(--panel-2); border-radius: 10px; padding: 8px 10px; min-width: 0; }
 .stat .k { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .stat .v { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; margin-top: 2px; }
@@ -798,14 +798,6 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
         <span class="pill" id="pillWindow">fenêtre 100 m</span>
       </header>
 
-      <div class="stats" id="stats">
-        <div class="stat"><div class="k">Distance</div><div class="v" id="sDist">–</div></div>
-        <div class="stat" id="stMax"><div class="k">Pente max</div><div class="v" id="sMax">–</div></div>
-        <div class="stat"><div class="k">Temps</div><div class="v" id="sTime">–</div></div>
-        <div class="stat"><div class="k">Détour réel</div><div class="v" id="sDetour">–</div></div>
-        <div class="stat" id="stSteep"><div class="k" id="kSteep">Raide &gt; 6 %</div><div class="v" id="sSteep">–</div></div>
-        <div class="stat"><div class="k">Dénivelé +</div><div class="v" id="sGain">–</div></div>
-      </div>
 
       <section>
         <h2>Détour</h2>
@@ -823,6 +815,18 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
         <h2>Profil</h2>
         <canvas class="chart" id="profile" aria-label="Profil altimétrique"></canvas>
         <div class="legend"><span><i style="background:var(--climb)"></i>montée 2 % au seuil</span><span><i style="background:var(--steep)"></i>au-delà du seuil</span><span><i style="background:var(--descent)"></i>descente</span></div>
+      </section>
+
+      <section>
+        <h2>Chiffres</h2>
+      <div class="stats" id="stats">
+        <div class="stat"><div class="k">Distance</div><div class="v" id="sDist">–</div></div>
+        <div class="stat" id="stMax"><div class="k">Pente max</div><div class="v" id="sMax">–</div></div>
+        <div class="stat"><div class="k">Temps</div><div class="v" id="sTime">–</div></div>
+        <div class="stat"><div class="k">Détour réel</div><div class="v" id="sDetour">–</div></div>
+        <div class="stat" id="stSteep"><div class="k" id="kSteep">Raide &gt; 6 %</div><div class="v" id="sSteep">–</div></div>
+        <div class="stat"><div class="k">Dénivelé +</div><div class="v" id="sGain">–</div></div>
+      </div>
       </section>
 
       <section>
@@ -1127,7 +1131,8 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
     ctx.font = '11px ' + css('--font-body'); ctx.fillStyle = css('--muted'); ctx.strokeStyle = css('--line'); ctx.lineWidth = 1;
     for (let g = gmin; g <= gmax; g += 1) { ctx.beginPath(); ctx.moveTo(padL, Y(g)); ctx.lineTo(W - padR, Y(g)); ctx.stroke(); ctx.textAlign = 'right'; ctx.fillText(g + ' %', padL - 4, Y(g) + 4); }
     ctx.textAlign = 'center';
-    for (let p = 0; p <= maxPct; p += 20) { ctx.textAlign = p === maxPct ? 'right' : p === 0 ? 'left' : 'center'; ctx.fillText('+' + p + ' %', X(p), H - 5); }
+    const pStep = W < 520 ? 40 : 20;
+    for (let p = 0; p <= maxPct; p += pStep) { ctx.textAlign = p === maxPct ? 'right' : p === 0 ? 'left' : 'center'; ctx.fillText('+' + p + ' %', X(p), H - 5); }
     // seuil raide
     if (state.thr >= gmin && state.thr <= gmax) { ctx.strokeStyle = css('--steep'); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(padL, Y(state.thr)); ctx.lineTo(W - padR, Y(state.thr)); ctx.stroke(); ctx.setLineDash([]); }
     // courbe en escalier
