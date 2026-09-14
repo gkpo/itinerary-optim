@@ -138,7 +138,8 @@ def _meters_per_point(ax, fig):
     return (x1 - x0) / (w_in * 72.0)
 
 
-def _draw_basemap(ax, fig, md: MapData, extent_xy):
+def _draw_basemap(ax, fig, md: MapData, extent_xy, unit_scale: float = 1.0):
+    """`unit_scale` : nombre d'unités projetées par mètre réel (1 en projection locale, 1/cos φ en Web Mercator)."""
     ax.set_facecolor(C_LAND)
     x0, x1, y0, y1 = extent_xy
     if md.landuse:
@@ -153,7 +154,7 @@ def _draw_basemap(ax, fig, md: MapData, extent_xy):
         ax.add_collection(LineCollection(md.water_line, colors=C_WATER, linewidths=1.2, zorder=2))
     if md.buildings:
         ax.add_collection(PolyCollection(md.buildings, facecolors=C_BUILDING, edgecolors=C_BUILDING_EDGE, linewidths=0.2, zorder=3))
-    mpp = _meters_per_point(ax, fig)
+    mpp = _meters_per_point(ax, fig) / unit_scale
     # voirie : d'abord les bordures (casing) puis le remplissage, par ordre d'importance
     by_class = {}
     for c, cl in md.roads:
@@ -489,3 +490,53 @@ def render_overview(routes: list[Route], graph: Graph, cfg: dict, data_dir: Path
             ha="right", va="bottom", fontsize=5.5, color="#333", zorder=41, path_effects=[pe.withStroke(linewidth=1.5, foreground="white")])
     _save_png(fig, out_png); plt.close(fig)
     return out_png
+
+
+def render_basemap_mercator(data_dir: Path, extent_ll, out_img: Path, width_px: int = 3400, fontsize: float = 7.0) -> dict:
+    """Fond de carte raster en Web Mercator (pour superposition exacte dans une carte web).
+
+    Retourne les bornes lon/lat de l'image et sa taille en pixels.
+    """
+    from .geo import WebMercator
+    proj = WebMercator()
+    md = MapData(data_dir, proj, extent_ll)
+    x0, y0 = proj.forward(extent_ll[0], extent_ll[1]); x1, y1 = proj.forward(extent_ll[2], extent_ll[3])
+    x0, y0, x1, y1 = float(x0), float(y0), float(x1), float(y1)
+    w_m, h_m = x1 - x0, y1 - y0
+    dpi = 150
+    fig_w = width_px / dpi
+    fig_h = fig_w * h_m / w_m
+    fig = plt.figure(figsize=(fig_w, fig_h), dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+    lat_mid = (extent_ll[1] + extent_ll[3]) / 2
+    _draw_basemap(ax, fig, md, (x0, x1, y0, y1), unit_scale=WebMercator.scale(lat_mid))
+    placer = _LabelPlacer(ax, fig, (x0, x1, y0, y1), fontsize=fontsize)
+    span = max(w_m, h_m)
+    cands = []
+    for name, cl, c in _merge_by_name(md.road_names):
+        inside = (c[:, 0] > x0) & (c[:, 0] < x1) & (c[:, 1] > y0) & (c[:, 1] < y1)
+        if inside.sum() < 2:
+            continue
+        cc = c[inside]
+        L = float(np.hypot(np.diff(cc[:, 0]), np.diff(cc[:, 1])).sum())
+        if L < span * 0.012:
+            continue
+        cands.append((-ROAD_STYLE[cl][2], -L, name, cc))
+    cands.sort(key=lambda t: (t[0], t[1]))
+    n = 0
+    for _, negL, name, cc in cands:
+        if n >= 900:
+            break
+        if placer.place_on_line(name, cc, max_per_name=3 if -negL > span * 0.25 else 1, min_sep_same=span * 0.2):
+            n += 1
+    out_img.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out_img.with_suffix(".tmp.png")
+    fig.savefig(tmp, dpi=dpi, facecolor="white"); plt.close(fig)
+    from PIL import Image
+    im = Image.open(tmp).convert("RGB")
+    if out_img.suffix.lower() == ".webp":
+        im.save(out_img, "WEBP", quality=82, method=6)
+    else:
+        im.quantize(colors=256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE).save(out_img, optimize=True)
+    tmp.unlink()
+    return {"west": extent_ll[0], "south": extent_ll[1], "east": extent_ll[2], "north": extent_ll[3], "width": im.width, "height": im.height}

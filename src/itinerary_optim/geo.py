@@ -60,3 +60,24 @@ def densify(lons, lats, step_m: float):
             out_d.append(cum + f * seg)
         cum += seg
     return np.array(out_lon), np.array(out_lat), np.array(out_d)
+
+
+class WebMercator:
+    """Projection Web Mercator (EPSG:3857) en mètres ; `scale(lat)` = facteur d'échelle local (1/cos φ)."""
+
+    R = 6378137.0
+
+    def forward(self, lon, lat):
+        lon, lat = np.asarray(lon, float), np.asarray(lat, float)
+        x = np.radians(lon) * self.R
+        y = np.log(np.tan(np.pi / 4 + np.radians(lat) / 2)) * self.R
+        return x, y
+
+    def inverse(self, x, y):
+        lon = np.degrees(np.asarray(x) / self.R)
+        lat = np.degrees(2 * np.arctan(np.exp(np.asarray(y) / self.R)) - np.pi / 2)
+        return lon, lat
+
+    @staticmethod
+    def scale(lat):
+        return 1.0 / math.cos(math.radians(lat))

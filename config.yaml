@@ -69,3 +69,10 @@ secondary:
 # recherche dichotomique sur la pente max.
 grade_tolerance_pct: 0.1
 grade_precision_pct: 0.05
+
+# Webapp interactive (python -m itinerary_optim.webapp_build) : frontière précalculée détour → tracé optimal.
+webapp:
+  slope_windows_m: [50, 100, 200]   # fenêtres de pente proposées dans l'interface
+  max_detour_pct: 120               # curseur de détour de 0 à cette valeur
+  detour_step_pct: 1
+  basemap_width_px: 3400            # largeur du fond de carte raster (Web Mercator)

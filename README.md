@@ -30,6 +30,24 @@ Sorties dans `output/` :
 | `synthese.png` | tous les tracés distincts superposés |
 | `resume.json` | métriques de toutes les variantes (lisible par machine) |
 
+## Webapp interactive
+
+`webapp/index.html` est une application autonome (mobile et bureau) : curseur de **détour maximal autorisé**
+qui change le tracé en direct, choix de la **fenêtre de pente** (50 / 100 / 200 m, tracés recalculés pour
+chacune), **seuil « raide »** et **puissance du cycliste** réglables, profil altimétrique interactif lié à la
+carte, courbe « pente max atteignable selon le détour », feuille de route, superposition du plus court chemin
+et de toutes les variantes.
+
+```bash
+PYTHONPATH=src python -m itinerary_optim.webapp_build config.yaml   # précalcul (≈ 15 min) + fond de carte
+python -m http.server -d webapp 8000                                # puis ouvrir http://localhost:8000
+```
+
+Le précalcul résout le problème pour chaque détour de 0 à `webapp.max_detour_pct` (pas `detour_step_pct`)
+et chaque fenêtre de `webapp.slope_windows_m`, dédoublonne les tracés et écrit `webapp/data.js` ; le fond
+de carte `webapp/basemap.webp` est rendu en Web Mercator pour se superposer exactement à la carte Leaflet
+(embarquée dans le dossier, aucun accès réseau nécessaire hormis les polices).
+
 ## Paramètres (`config.yaml`)
 
 - `start`, `end` : coordonnées et libellés.
