@@ -32,7 +32,10 @@ Sorties dans `output/` :
 
 ## Webapp interactive
 
-**En ligne : https://gkpo.github.io/itinerary-optim/** (déployée par GitHub Actions depuis `webapp/`).
+**En ligne : https://gkpo.github.io/itinerary-optim/** — le workflow `.github/workflows/pages.yml` pousse
+`webapp/` sur la branche `gh-pages` à chaque modification. Activation à faire une seule fois par le
+propriétaire du dépôt : *Settings → Pages → Build and deployment → Source : « Deploy from a branch »,
+branche `gh-pages`, dossier `/ (root)`* (le jeton des Actions n'a pas le droit de créer le site Pages).
 
 `webapp/index.html` est une application autonome (mobile et bureau) : curseur de **détour maximal autorisé**
 qui change le tracé en direct, choix de la **fenêtre de pente** (50 / 100 / 200 m, tracés recalculés pour
