@@ -3,3 +3,4 @@ data/
 __pycache__/
 *.pyc
 data_fetch.log
+webapp_build.log
