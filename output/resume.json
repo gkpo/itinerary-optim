@@ -1,0 +1,86 @@
+{
+  "start": {
+    "name": "199 rue de Paris, 93130 Noisy-le-Sec",
+    "lat": 48.9025,
+    "lon": 2.4621
+  },
+  "end": {
+    "name": "8 bis place de la Fraternité, 93100 Montreuil",
+    "lat": 48.8567,
+    "lon": 2.4225
+  },
+  "variants": [
+    {
+      "tier_pct": 0,
+      "length_m": 7415,
+      "detour_pct": 0.0,
+      "max_grade_pct": 7.9,
+      "steep_len_m": 131,
+      "gain_m": 82,
+      "loss_m": 76,
+      "time_s": 1523,
+      "same_as_tier": null,
+      "png": "variante_+00pct.png"
+    },
+    {
+      "tier_pct": 10,
+      "length_m": 7471,
+      "detour_pct": 0.8,
+      "max_grade_pct": 6.0,
+      "steep_len_m": 0,
+      "gain_m": 82,
+      "loss_m": 76,
+      "time_s": 1519,
+      "same_as_tier": null,
+      "png": "variante_+10pct.png"
+    },
+    {
+      "tier_pct": 20,
+      "length_m": 7471,
+      "detour_pct": 0.8,
+      "max_grade_pct": 6.0,
+      "steep_len_m": 0,
+      "gain_m": 82,
+      "loss_m": 76,
+      "time_s": 1519,
+      "same_as_tier": 10,
+      "png": null
+    },
+    {
+      "tier_pct": 30,
+      "length_m": 7471,
+      "detour_pct": 0.8,
+      "max_grade_pct": 6.0,
+      "steep_len_m": 0,
+      "gain_m": 82,
+      "loss_m": 76,
+      "time_s": 1519,
+      "same_as_tier": 10,
+      "png": null
+    },
+    {
+      "tier_pct": 40,
+      "length_m": 7471,
+      "detour_pct": 0.8,
+      "max_grade_pct": 6.0,
+      "steep_len_m": 0,
+      "gain_m": 82,
+      "loss_m": 76,
+      "time_s": 1519,
+      "same_as_tier": 10,
+      "png": null
+    },
+    {
+      "tier_pct": 50,
+      "length_m": 11008,
+      "detour_pct": 48.5,
+      "max_grade_pct": 5.6,
+      "steep_len_m": 0,
+      "gain_m": 99,
+      "loss_m": 93,
+      "time_s": 2130,
+      "same_as_tier": null,
+      "png": "variante_+50pct.png"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+# Configuration du calcul d'itinéraires vélo "pentes douces".
+# Toutes les valeurs ci-dessous sont modifiables ; relancer `python -m itinerary_optim run`.
+
+start:
+  name: "199 rue de Paris, 93130 Noisy-le-Sec"
+  lat: 48.9025
+  lon: 2.4621
+end:
+  name: "8 bis place de la Fraternité, 93100 Montreuil"
+  lat: 48.8567
+  lon: 2.4225
+
+# Paliers de détour, en % de distance supplémentaire par rapport au trajet le plus court.
+# 0 = trajet le plus court.
+detour_tiers_pct: [0, 10, 20, 30, 40, 50]
+
+# Fenêtre glissante (m) pour le calcul de la pente maximale en montée.
+slope_window_m: 100
+# Seuil (%) au-delà duquel un tronçon est considéré "raide" (surlignage + longueur cumulée).
+steep_threshold_pct: 6.0
+# Pas d'échantillonnage de l'altitude le long des tronçons (m).
+sample_step_m: 10
+
+# Zone de données téléchargée autour des deux points (degrés de marge autour de la bbox départ/arrivée).
+data_margin_deg: 0.045
+overture_release: "2026-08-19.0"
+# Zoom des tuiles d'altitude Terrarium (AWS Terrain Tiles) : 14 ≈ 6 m/pixel à cette latitude.
+dem_zoom: 14
+
+# Modèle cycliste (vélo classique) pour le temps estimé.
+rider:
+  power_w: 110          # puissance moyenne soutenue
+  mass_kg: 90           # cycliste + vélo
+  crr: 0.007            # résistance au roulement
+  cda: 0.55             # surface frontale × Cx
+  max_speed_kmh: 32     # vitesse plafonnée en descente
+  min_speed_kmh: 3.5    # en dessous, on pousse le vélo
+  stop_penalty_s: 8     # temps perdu par changement de rue (intersections, feux)
+
+# Classes de voies Overture autorisées à vélo, avec un facteur de "préférence" (1 = neutre) utilisé
+# uniquement pour départager des itinéraires de même longueur/pente.
+road_classes:
+  cycleway: 1.0
+  residential: 1.0
+  living_street: 1.0
+  tertiary: 1.0
+  unclassified: 1.0
+  secondary: 1.05
+  primary: 1.1
+  service: 1.1
+  track: 1.2
+  path: 1.3
+  pedestrian: 1.3
+  footway: 1.6
+  unknown: 1.2
+
+output_dir: output
+data_dir: data
+
+# Affinage à pente max fixée : pondérations essayées (par ordre décroissant) pour adoucir le profil
+# tant que le budget de distance le permet ; min_gain = gain relatif minimal du critère de douceur
+# (Σ longueur × (pente/seuil)^3) pour accepter un tracé plus long.
+secondary:
+  alphas: [4.0, 2.0, 1.0, 0.5, 0.25, 0.0]
+  lambdas: [20.0, 5.0, 1.0, 0.0]
+  mus: [0.3, 0.0]
+  min_gain: 0.05
+# Tolérance (%) admise entre la pente cible et la pente fenêtrée réelle du tracé, et précision de la
+# recherche dichotomique sur la pente max.
+grade_tolerance_pct: 0.1
+grade_precision_pct: 0.05

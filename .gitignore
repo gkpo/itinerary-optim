@@ -1,0 +1,5 @@
+# Données brutes téléchargées (Overture Maps, tuiles d'altitude) et cache du graphe : régénérables
+data/
+__pycache__/
+*.pyc
+data_fetch.log
