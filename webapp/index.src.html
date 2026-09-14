@@ -76,6 +76,7 @@ h1 small { display: block; font-family: var(--font-body); font-weight: 500; font
 .stat.ok .v { color: var(--start); }
 
 section { border-top: 1px solid var(--line); padding: 12px 0; }
+#scroll > section:first-child { border-top: 0; padding-top: 4px; }
 section h2 { font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
 .ctl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; margin-bottom: 10px; }
 .ctl label { font-weight: 500; }
@@ -132,10 +133,6 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
   <aside id="panel" aria-label="Réglages et détails">
     <div id="handle" aria-hidden="true"><span></span></div>
     <div id="scroll">
-      <header class="brand">
-        <h1>Noisy-le-Sec → Montreuil<small>vélo classique · pentes douces</small></h1>
-        <span class="pill" id="pillWindow">fenêtre 100 m</span>
-      </header>
 
 
       <section>
@@ -347,7 +344,6 @@ ol.steps li.active { background: var(--accent-soft); margin: 0 -8px; padding: 7p
     const [lo, hi] = identicalRange(state.win, id);
     $('detourHint').textContent = id === shortestId ? 'Trajet le plus court (référence des détours).'
       : (lo === hi ? `Ce tracé n'apparaît qu'à +${lo} %.` : `Même tracé pour tout détour autorisé de +${lo} % à +${hi} %.`);
-    $('pillWindow').textContent = `fenêtre ${state.win} m`;
     $('thrOut').textContent = String(state.thr).replace('.', ',') + ' %';
     $('powerOut').textContent = state.power + ' W';
     // carte
